@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @Converter(autoApply = true)
 public class OffsetDateTimeConverter implements AttributeConverter<OffsetDateTime, String> {
 
-    public static final String DATE_TIME_OFFSET_FORMATTER_PATTERN = "yyyy-MM-dd HH:mm:ss.SSSSSSX";
+    public static final String DATE_TIME_OFFSET_FORMATTER_PATTERN = "yyyy-MM-dd HH:mm:ss[.SSSSSSSSS][.SSSSSS][.SSSSS][.SSSS][.SSS]X";
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_OFFSET_FORMATTER_PATTERN);
 
     @Override
