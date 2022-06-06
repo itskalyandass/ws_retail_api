@@ -25,6 +25,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Swagger configuration to temporarily fix issue with spring-boot actuator with spring fox.
+ * @author Kalyan Dass
+ *
+ */
 @Configuration
 @EnableWebMvc
 public class SwaggerConfig {

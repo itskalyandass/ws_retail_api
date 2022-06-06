@@ -14,9 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +49,18 @@ public class RewardServiceTest {
         }};
     }
 
+    private List<Customer> getCustomerEntityNoPurchase() {
+        return new ArrayList<>() {{
+            add(new Customer(1L, "test", null));
+        }};
+    }
+
+    private List<com.atgcorp.retail.model.dto.Customer> getCustomerDTONoPurchase() {
+        return new ArrayList<>() {{
+            add(new com.atgcorp.retail.model.dto.Customer(1L, "test", null));
+        }};
+    }
+    
     private List<CustomerReward> getCustomerRewardDTO() {
         return new ArrayList<>() {{
             add(new CustomerReward(1L, "test", null));
@@ -61,7 +75,7 @@ public class RewardServiceTest {
         when(customMapper.toCustomerDTOS(entities)).thenReturn(customerDTOs);
         when(customMapper.toCustomerRewards(customerDTOs)).thenReturn(getCustomerRewardDTO());
 
-        var response = rewardService.getAllRewardsPerCustomer();
+        var response = rewardService.getAllRewardsPerCustomer(Optional.empty());
         assertNotNull(response);
         assertEquals(1, response.size());
         assertEquals(1, response.get(0).getId());
@@ -71,5 +85,23 @@ public class RewardServiceTest {
         assertNotNull(response.get(0).getReward().getRewardByMonths());
         assertEquals(1, response.get(0).getReward().getRewardByMonths().size());
         assertEquals(70, response.get(0).getReward().getRewardByMonths().get(0).getTotal());
+    }
+    
+    @Test
+    void test_getAllRewardsPerCustomer_success_nopurchase() {
+        var entities = getCustomerEntityNoPurchase();
+        var customerDTOs = getCustomerDTONoPurchase();
+        when(customerRepository.findAll()).thenReturn(entities);
+        when(customMapper.toCustomerDTOS(entities)).thenReturn(customerDTOs);
+        when(customMapper.toCustomerRewards(customerDTOs)).thenReturn(getCustomerRewardDTO());
+
+        var response = rewardService.getAllRewardsPerCustomer(Optional.empty());
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals(1, response.get(0).getId());
+        assertEquals("test", response.get(0).getName());
+        assertNotNull(response.get(0).getReward());
+        assertEquals(0, response.get(0).getReward().getTotal());
+        assertNull(response.get(0).getReward().getRewardByMonths());
     }
 }
